@@ -8,8 +8,8 @@ class MbedtlsConan(ConanFile):
     url = "<Package recipe repository url here, for issues about the package>"
     build_policy = "missing"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = "shared=False", "fPIC=False"
     generators = "cmake"
 
     def source(self):
@@ -28,6 +28,8 @@ conan_basic_setup()''')
         else:
             cmake.definitions["USE_STATIC_MBEDTLS_LIBRARY"] = "ON"
 
+        if self.settings.os != "Windows" and self.options.fPIC:
+            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "True"
         cmake.definitions["ENABLE_TESTING"] = "OFF"
         cmake.definitions["ENABLE_PROGRAMS"] = "OFF"
         cmake.definitions["ENABLE_ZLIB_SUPPORT"] = "OFF"
